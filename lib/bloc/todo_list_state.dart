@@ -15,7 +15,7 @@ final class TodoListLoading extends TodoListState {
 }
 
 final class TodoListLoaded extends TodoListState {
-  final Map<String, String> todos;
+  final List<Todo> todos;
 
   const TodoListLoaded({required this.todos});
 

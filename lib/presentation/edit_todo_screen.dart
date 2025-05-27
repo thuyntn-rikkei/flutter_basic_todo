@@ -13,7 +13,7 @@ class EditTodoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => EditTodoBloc(id)..add(LoadTodoEvent(id: id)),
+      create: (context) => EditTodoBloc(id)..add(LoadTodoEvent()),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,

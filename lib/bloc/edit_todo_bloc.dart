@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
+import '../data/todo.dart';
 import '../data/todo_share_preferences.dart';
 
 part 'edit_todo_event.dart';
@@ -13,11 +14,21 @@ class EditTodoBloc extends Bloc<EditTodoEvent, EditTodoState> {
     on<EditTodoEvent>((event, emit) async {
       switch(event){
         case UpdateTodoEvent():
-          await _todoSharePreferences.saveTodo(id, event.title);
+          await _todoSharePreferences.saveTodo(
+              id,
+              Todo(id: id, title: event.title, description: event.description, isCompleted: event.isCompleted)
+          );
           emit(UpdatedTodo());
         case LoadTodoEvent():
-          String? title = await _todoSharePreferences.getTodo(event.id);
-          emit(LoadedTodo(title: title ?? ''));
+          Todo? todo = await _todoSharePreferences.getTodo(id);
+          if(todo == null){
+            emit(ErrorTodo());
+            return;
+          }
+          print(todo.toJson());
+          emit(LoadedTodo(title: todo.title, description: todo.description, isCompleted: todo.isCompleted, id: id));
+        case CheckedTodoEvent():
+          emit(LoadedTodo(title: event.title, description: event.description, isCompleted: event.isCompleted, id: id));
       }
     });
   }

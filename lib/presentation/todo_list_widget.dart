@@ -25,8 +25,10 @@ class TodoListWidget extends StatelessWidget {
               itemCount: state.todos.length,
               itemBuilder: (BuildContext context, int index) {
                 return TodoItem(
-                  first: state.todos.entries.elementAt(index).key,
-                  second: state.todos.entries.elementAt(index).value,
+                  id: state.todos[index].id,
+                  title: state.todos[index].title,
+                  description: state.todos[index].description,
+                  isCompleted: state.todos[index].isCompleted,
                 );
               },
             );
@@ -37,10 +39,12 @@ class TodoListWidget extends StatelessWidget {
 }
 
 class TodoItem extends StatelessWidget {
-  const TodoItem({super.key, required this.first, required this.second});
+  final String id;
+  final String title;
+  final String description;
+  final bool isCompleted;
 
-  final String first;
-  final String second;
+  const TodoItem({super.key, required this.title, required this.description, required this.isCompleted, required this.id});
 
   @override
   Widget build(BuildContext context) {
@@ -50,11 +54,17 @@ class TodoItem extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(second),
-            Text(first),
+            Text(title),
+            Text(description),
+            Checkbox(
+              value: isCompleted,
+              onChanged: (value) {
+                context.read<TodoListBloc>().add(CheckedTodo(id: id, title: title, description: description, isCompleted: value!));
+              },
+            ),
             IconButton(
               onPressed: () {
-                context.read<TodoListBloc>().add(DeleteTodo(id: first));
+                context.read<TodoListBloc>().add(DeleteTodo(id: id));
               },
               icon: Icon(Icons.delete),
             ),
@@ -62,7 +72,7 @@ class TodoItem extends StatelessWidget {
         ),
       ),
       onTap: () async {
-        final result = await context.push('${Routes.editTodo}/$first');
+        final result = await context.push('${Routes.editTodo}/$id');
         if (result == true) {
           print("Back edit");
           context.read<TodoListBloc>().add(LoadTodos());

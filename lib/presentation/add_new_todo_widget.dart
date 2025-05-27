@@ -11,35 +11,44 @@ class AddNewTodoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextEditingController controller = TextEditingController();
+    final TextEditingController descriptionController = TextEditingController();
     return BlocConsumer<AddNewTodoBloc, AddNewTodoState>(
       builder: (BuildContext context, AddNewTodoState state) {
         switch (state) {
-          case AddNewTodoInitial():
+          case SavedTodo():
+              return SizedBox.shrink();
+          case CheckedTodo():
             return Column(
               children: [
                 TextField(
-                    decoration: InputDecoration(hintText: 'Title'),
-                    controller: controller,
+                  decoration: InputDecoration(hintText: 'Title'),
+                  controller: controller,
+                ),
+                TextField(
+                  decoration: InputDecoration(hintText: 'Description'),
+                  controller: descriptionController,
+                ),
+                Checkbox(
+                  value: state.isCompleted,
+                  onChanged: (value) {
+                    context.read<AddNewTodoBloc>().add(CheckTodoEvent(title: controller.text, description: descriptionController.text, isCompleted: value!));
+                  },
                 ),
                 OutlinedButton(
                     onPressed: () {
-                      context.read<AddNewTodoBloc>().add(SaveTodoEvent(title: controller.text));
-                    }, 
+                      context.read<AddNewTodoBloc>().add(SaveTodoEvent(title: controller.text, description: descriptionController.text, isCompleted: state.isCompleted));
+                    },
                     child: Text("Add")
                 ),
               ],
             );
-          case SavedTodo():
-              return SizedBox.shrink();
         }
       },
       listener: (BuildContext context, AddNewTodoState state) {
         switch (state) {
-
-          case AddNewTodoInitial():
-
           case SavedTodo():
             context.pop(true);
+          case CheckedTodo():
         }
       },
     );

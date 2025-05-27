@@ -6,8 +6,10 @@ sealed class EditTodoEvent extends Equatable {
 
 class UpdateTodoEvent extends EditTodoEvent {
   final String title;
+  final String description;
+  final bool isCompleted;
 
-  const UpdateTodoEvent({required this.title});
+  const UpdateTodoEvent({required this.description, required this.title, required this.isCompleted});
 
   @override
   List<Object?> get props => [title];
@@ -15,8 +17,16 @@ class UpdateTodoEvent extends EditTodoEvent {
 }
 
 class LoadTodoEvent extends EditTodoEvent {
-  final String id;
-  const LoadTodoEvent({required this.id});
+  const LoadTodoEvent();
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [];
+}
+
+class CheckedTodoEvent extends EditTodoEvent {
+  final String title;
+  final String description;
+  final bool isCompleted;
+  const CheckedTodoEvent({required this.isCompleted, required this.title, required this.description});
+  @override
+  List<Object?> get props => [isCompleted, title, description];
 }

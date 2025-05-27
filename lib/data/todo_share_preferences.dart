@@ -1,18 +1,25 @@
 
+import 'dart:convert';
+
 import 'package:bloc_update/data/todo.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TodoSharePreferences {
-  Future<void> saveTodo(String key, String value) async {
+  Future<void> saveTodo(String key, Todo value) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(key, value);
 
-    print('Saved todo with key: $key and value: $value');
+    final jsonString = jsonEncode(value.toJson());
+    await prefs.setString(key, jsonString);
+
+    print('Saved todo with key: $key and value: $jsonString');
   }
 
-  Future<String?> getTodo(String key) async {
+  Future<Todo?> getTodo(String key) async {
+    print('Getting todo with key: $key');
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(key);
+    final value = prefs.getString(key);
+    return value?.isNotEmpty == true ? Todo.fromJson(jsonDecode(value!)) : null;
   }
 
   Future<void> deleteTodo(String key) async {
@@ -23,16 +30,30 @@ class TodoSharePreferences {
   }
 
   Future<void> clearAllTodos() async {
+    print('Clearing all todos');
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
   }
 
-  Future<Map<String, String>> getAllTodos() async {
+  Future<List<Todo>> getAllTodos() async {
+    print('Getting all todos');
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getKeys().fold<Map<String, String>>(
-      {},
-      (map, key) => map..[key] = prefs.getString(key)!,
-    );
-  }
 
+    final keys = prefs.getKeys();
+    final todos = <Todo>[];
+
+    for (final key in keys) {
+      print('Key: $key');
+      final jsonString = prefs.getString(key);
+      if (jsonString?.isNotEmpty == true) {
+        try {
+          final jsonMap = jsonDecode(jsonString!) as Map<String, dynamic>;
+          todos.add(Todo.fromJson(jsonMap));
+        } catch (e) {
+          debugPrint('Lỗi decode todo với key $key: $e');
+        }
+      }
+    }
+    return todos;
+  }
 }

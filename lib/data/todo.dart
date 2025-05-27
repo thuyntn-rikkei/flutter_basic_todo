@@ -1,36 +1,19 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+part 'todo.freezed.dart';
+part 'todo.g.dart';
 
-@immutable
-class Todo extends Equatable{
-  final String id;
-  final String title;
-  final String description;
-  final bool isCompleted;
+@freezed
+class Todo with _$Todo {
+  const factory Todo({
+    required String id,
+    required String title,
+    required String description,
+    @Default(false) bool isCompleted,
+  }) = _Todo;
 
-  const Todo({
-    required this.id,
-    required this.title,
-    required this.description,
-    this.isCompleted = false,
-  });
-
-  Todo copyWith({
-    String? id,
-    String? title,
-    String? description,
-    bool? isCompleted,
-  }) {
-    return Todo(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      description: description ?? this.description,
-      isCompleted: isCompleted ?? this.isCompleted,
-    );
-  }
-
-  @override
-  List<Object?> get props => [id, title, description, isCompleted];
+  factory Todo.fromJson(Map<String, dynamic> json) => _$TodoFromJson(json);
 }
