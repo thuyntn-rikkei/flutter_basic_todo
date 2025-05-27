@@ -6,12 +6,11 @@ import 'package:go_router/go_router.dart';
 import '../bloc/add_new_todo_bloc.dart';
 
 class AddNewTodoWidget extends StatelessWidget {
-  const AddNewTodoWidget({super.key});
-
+  AddNewTodoWidget({super.key});
+  final TextEditingController controller = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final TextEditingController controller = TextEditingController();
-    final TextEditingController descriptionController = TextEditingController();
     return BlocConsumer<AddNewTodoBloc, AddNewTodoState>(
       builder: (BuildContext context, AddNewTodoState state) {
         switch (state) {

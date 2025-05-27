@@ -6,12 +6,12 @@ import 'package:go_router/go_router.dart';
 import '../bloc/edit_todo_bloc.dart';
 
 class EditTodoWidget extends StatelessWidget {
-  const EditTodoWidget({super.key});
+  EditTodoWidget({super.key});
+  final TextEditingController controller = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController controller = TextEditingController();
-    final TextEditingController descriptionController = TextEditingController();
     return BlocConsumer<EditTodoBloc, EditTodoState>(
       builder: (BuildContext context, EditTodoState state) {
         switch (state) {
@@ -53,12 +53,8 @@ class EditTodoWidget extends StatelessWidget {
         }
       },
       listener: (BuildContext context, EditTodoState state) {
-        switch (state) {
-          case EditTodoInitial():
-          case UpdatedTodo():
-            context.pop(true);
-          case LoadedTodo():
-          case ErrorTodo():
+        if(state is UpdatedTodo){
+          context.pop(true);
         }
       },
     );
